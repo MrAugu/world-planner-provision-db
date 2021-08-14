@@ -122,7 +122,7 @@ for (const texture of textureFiles) {
       coerceIntoType(item.actionType),
       item.item_category,
       item.name,
-      `${item.texture}.png`,
+      `${item.texture.split(".")[0]}.png`,
       textures.find(texture => texture.name === `${item.texture.split(".")[0]}.png`).hash,
       item.texture_x,
       item.texture_y,
