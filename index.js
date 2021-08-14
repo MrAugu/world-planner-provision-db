@@ -69,7 +69,7 @@ for (const texture of textureFiles) {
   CREATE TABLE IF NOT EXISTS \`items\` (
     \`id\` VARCHAR(20),
     \`game_id\` INT SIGNED,
-    \`action_type\` VARCHAR(20),
+    \`action_type\` SMALLINT SIGNED,
     \`item_category\` SMALLINT SIGNED,
     \`name\` VARCHAR(150),
     \`texture\` VARCHAR(50),
