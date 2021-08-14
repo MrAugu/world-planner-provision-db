@@ -8,7 +8,12 @@ const SnowflakeId = require("snowflake-id");
 const snowflake = new SnowflakeId.default({
   mid: 1,
   offset: (2021 - 1970)* 31536000 * 1000
-})
+});
+const actionTypeMap = {
+  "FOREGROUND": 1,
+  "BACKGROUND": 2,
+  "FIST": 3
+};
 
 const inputFilePath = path.resolve(process.cwd(), process.argv[2] || "384390");
 if (!fs.existsSync(inputFilePath)) return console.log("You must specify a valid ");
@@ -25,6 +30,13 @@ try {
 let items = itemData.items;
 let textureFiles = [];
 items = items.filter(item => ["FIST", "FOREGROUND", "BACKGROUND"].includes(coerceIntoType(item.action_type)));
+items = items.filter(item => item.name.indexOf("null_item") !== 0);
+items = items.map(item => ({
+  ...item,
+  actionType: coerceIntoType(item.action_type)
+}));
+
+console.log(`~ ${items.length.toLocaleString()} Items.`);
 
 for (const item of items) {
   let [name, extension] = item.texture.split(".");
@@ -94,20 +106,21 @@ for (const texture of textureFiles) {
   console.log("Data removed, tables re-created - inserting textures.");
   const textureBeginTime = Date.now();
   for (const texture of textures) {
+    console.log(`+ Inserting  texture ${texture.name} - ${texture.hash}.`);
     await connection.query("INSERT INTO `textures` (id, name, hash, contents) VALUES (?, ?, ?, ?)", [
       BigInt(texture.id),
       texture.name,
       texture.hash,
       texture.data
     ]);
-    console.log(`Inserted texture ${texture.name}.`);
   }
   const textureEndTime = Date.now();
   console.log("Textures have been inserted.");
 
   const itemsBeginTime = Date.now();
   for (const item of items) {
-    if (item.id % 100 === 0) console.log(`Inserting item with id #${item.id}.`);
+    console.log(`+ Inserting item with id ${item.id} of type ${item.actionType}.`);
+
     const itemIdBuffer = Buffer.alloc(9);
     itemIdBuffer.writeInt16LE(Math.floor(Math.random() * 32767));
     itemIdBuffer.writeInt32BE(item.id, 2);
@@ -119,7 +132,7 @@ for (const texture of textureFiles) {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
       itemIdBuffer.toString("hex"),
       item.id,
-      coerceIntoType(item.actionType),
+      actionTypeMap[item.actionType] || console.error(`Unknown action type ${item.actionType}.`),
       item.item_category,
       item.name,
       `${item.texture.split(".")[0]}.png`,
