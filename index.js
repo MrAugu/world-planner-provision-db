@@ -36,7 +36,7 @@ items = items.map(item => ({
   actionType: coerceIntoType(item.action_type)
 }));
 
-console.log(`~ ${items.length.toLocaleString()} Items.`);
+console.log(`~ ${items.length.toLocaleString()} total items.`);
 
 for (const item of items) {
   let [name, extension] = item.texture.split(".");
