@@ -129,8 +129,8 @@ for (const texture of textureFiles) {
       item.spread_type,
       item.collision_type,
       item.rarity,
-      item.max_amount,
-      item.break_hits
+      item.max_amount || 1,
+      Math.floor(item.break_hits / 6) || 1
     ]);
   }
   const itemsEndTime = Date.now();
