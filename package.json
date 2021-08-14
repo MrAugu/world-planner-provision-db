@@ -19,6 +19,7 @@
   "homepage": "https://github.com/MrAugu/world-planner-provision-db#readme",
   "dependencies": {
     "dotenv": "^10.0.0",
-    "mysql2": "^2.3.0"
+    "mysql2": "^2.3.0",
+    "snowflake-id": "^1.1.0"
   }
 }
